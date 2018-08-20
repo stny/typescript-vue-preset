@@ -3,6 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+
 module.exports = {
   mode: process.env.WEBPACK_SERVE ? 'development' : 'production',
   entry: './src/index.ts',
@@ -15,17 +17,7 @@ module.exports = {
     rules: [
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {
-          loaders: {
-            // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-            // the "scss" and "sass" values for the lang attribute to the right configs here.
-            // other preprocessors should work out of the box, no loader config like this necessary.
-            'scss': 'vue-style-loader!css-loader!sass-loader',
-            'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
-          }
-          // other vue-loader options go here
-        }
+        loader: 'vue-loader'
       },
       {
         test: /\.tsx?$/,
@@ -35,6 +27,13 @@ module.exports = {
           appendTsSuffixTo: [/\.vue$/],
           transpileOnly: true
         }
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
+        ]
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -54,6 +53,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({ template: 'src/index.html' }),
     new CleanWebpackPlugin(['dist']),
-    new ForkTsCheckerWebpackPlugin()
+    new ForkTsCheckerWebpackPlugin(),
+    new VueLoaderPlugin()
   ]
 }
